@@ -1,0 +1,21 @@
+export interface Edge { from: string; to: string; kind: "amends" | "implements" | "commences" | "supersedes" | "explains" | "relates_to" }
+export const EDGES: Edge[] = [
+  { from: "bd_amend_act_2023", to: "bd_act_2002", kind: "amends" },
+  { from: "bd_amend_commencement", to: "bd_amend_act_2023", kind: "commences" },
+  { from: "bd_rules_2024", to: "bd_amend_act_2023", kind: "implements" },
+  { from: "bd_rules_amend_2025", to: "bd_rules_2024", kind: "amends" },
+  { from: "nba_abs_regs_2025", to: "bd_amend_act_2023", kind: "implements" },
+  { from: "collab_guidelines", to: "bd_act_2002", kind: "relates_to" },
+  { from: "itpgrfa_crops_2014", to: "bd_act_2002", kind: "relates_to" },
+  { from: "tm_amend_2010", to: "tm_act_1999", kind: "amends" },
+  { from: "tm_explainer", to: "tm_act_1999", kind: "explains" },
+  { from: "nice_classification", to: "tm_act_1999", kind: "relates_to" },
+  { from: "jan_vishwas_2023", to: "patents_act_current", kind: "amends" },
+  { from: "jan_vishwas_2023", to: "dc_act_1940", kind: "amends" },
+  { from: "patents_act_earlier", to: "patents_act_current", kind: "supersedes" },
+  { from: "curated_intl", to: "patents_act_current", kind: "relates_to" },
+  { from: "curated_intl", to: "gi_act_1999", kind: "relates_to" },
+  { from: "curated_intl", to: "bd_amend_act_2023", kind: "relates_to" },
+  { from: "gi_act_1999", to: "tm_act_1999", kind: "relates_to" },
+  { from: "designs_act_2000", to: "patents_act_current", kind: "relates_to" },
+];

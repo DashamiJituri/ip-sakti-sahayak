@@ -1,0 +1,77 @@
+{
+  "note": "Written summaries of treaties and export-market regimes. They are NOT the official texts. Every entry carries a verifyUrl; the app labels these as 'curated summary' and lowers confidence when an answer rests only on them.",
+  "entries": [
+    {
+      "id": "trips",
+      "label": "TRIPS Agreement (WTO)",
+      "verifyUrl": "https://www.wto.org/english/tratop_e/trips_e/trips_e.htm",
+      "text": "TRIPS Agreement (WTO), summary. Article 27.3(b) allows WTO members to exclude plants and animals other than micro-organisms, and essentially biological processes, from patentability, but members must protect plant varieties through patents, an effective sui generis system, or a combination. Articles 22 to 24 deal with geographical indications: Article 22 requires legal means to prevent misleading use of a geographical indication, and Article 23 gives an additional, higher level of protection for wines and spirits. Article 33 sets a minimum patent term of 20 years counted from the filing date. Article 29 requires an applicant to disclose the invention clearly and completely enough for a person skilled in the art to carry it out. TRIPS is the international baseline behind India's Patents Act 1970 (as amended in 2005), the GI Act 1999 and the Trade Marks Act 1999."
+    },
+    {
+      "id": "cbd",
+      "label": "Convention on Biological Diversity (CBD)",
+      "verifyUrl": "https://www.cbd.int/convention/text/",
+      "text": "Convention on Biological Diversity (CBD), summary. The CBD entered into force in 1993 and India is a party. Article 15 recognises the sovereign right of states over their natural resources. Access to genetic resources is subject to the prior informed consent of the provider country and to mutually agreed terms. Article 8(j) asks parties to respect, preserve and maintain the knowledge, innovations and practices of indigenous and local communities, to promote their wider application with the approval and involvement of the holders, and to encourage the equitable sharing of the benefits arising from their use. India's Biological Diversity Act 2002 is the national law that gives effect to the CBD."
+    },
+    {
+      "id": "nagoya",
+      "label": "Nagoya Protocol on Access and Benefit-Sharing",
+      "verifyUrl": "https://www.cbd.int/abs/",
+      "text": "Nagoya Protocol on Access and Benefit-Sharing (ABS), summary. Adopted in 2010 and in force since 12 October 2014; India is a party. Article 5 requires fair and equitable sharing of benefits from the utilisation of genetic resources. Article 6 covers access to genetic resources: access is subject to prior informed consent and mutually agreed terms with the provider country, where the provider requires them. Article 7 applies similar principles to traditional knowledge associated with genetic resources held by indigenous and local communities. Articles 15 and 16 ask user countries to take measures so that resources and associated traditional knowledge used within their jurisdiction were accessed in line with the provider country's ABS law. Article 17 sets up monitoring of utilisation through designated checkpoints and an internationally recognised certificate of compliance, published on the ABS Clearing-House. In practice an Indian exporter or a foreign buyer of Indian plant material should ask what the destination country requires as proof of legal access."
+    },
+    {
+      "id": "gratk",
+      "label": "WIPO Treaty on IP, Genetic Resources and Associated Traditional Knowledge (GRATK)",
+      "verifyUrl": "https://www.wipo.int/en/web/traditional-knowledge/wipo-treaty-on-ip-gr-and-associated-tk",
+      "text": "WIPO Treaty on Intellectual Property, Genetic Resources and Associated Traditional Knowledge (GRATK Treaty), summary. Adopted on 24 May 2024 in Geneva. It would create a new international patent disclosure requirement: where a claimed invention is based on genetic resources or associated traditional knowledge, the applicant must disclose the country of origin of the genetic resources, and the Indigenous Peoples or local community that provided the associated traditional knowledge. STATUS: the Treaty has NOT entered into force. It enters into force three months after 15 eligible parties deposit instruments of ratification or accession. Reports from 2025 and 2026 indicate only a few states had ratified. Until then it creates no binding disclosure duty on an applicant. Check WIPO for the current number of parties and for India's status. India already has a domestic disclosure rule in its Patents Act (see the section on disclosing the source of biological material) and the Biological Diversity Act."
+    },
+    {
+      "id": "pct_paris",
+      "label": "Patent Cooperation Treaty (PCT) and Paris Convention priority",
+      "verifyUrl": "https://www.wipo.int/pct/en/",
+      "text": "Patent Cooperation Treaty (PCT) and Paris Convention priority, summary. The PCT, administered by WIPO, lets an applicant file one international application that has effect in all PCT member states. It does not grant an international patent: after the international search and written opinion, the applicant enters the national or regional phase in each country where protection is wanted, generally 30 months from the earliest priority date (some offices allow 31 months). The Paris Convention gives a right of priority: a first patent filing (for example in India) can be followed by filings abroad within 12 months and still be treated as filed on the first date. For designs and trade marks the Paris priority period is 6 months. India is a PCT member. PCT Articles 15 and 16 require an international search of prior art, but the search is generally limited to documentation that is accessible to examiners, which is why traditional knowledge databases matter."
+    },
+    {
+      "id": "madrid",
+      "label": "Madrid System for international trade marks (WIPO)",
+      "verifyUrl": "https://www.wipo.int/madrid/en/",
+      "text": "Madrid System, summary. Through WIPO, an owner of a trade mark application or registration in a member country (the office of origin) can apply for an international registration and designate other member countries, instead of filing separately in each. The international registration depends on the basic mark for the first five years. India is a member of the Madrid Protocol; confirm that each export market you care about is a member. For Ayurvedic products, choose the trade mark class that matches the goods (for example medicinal preparations, cosmetics or foods) using the classification list."
+    },
+    {
+      "id": "hague",
+      "label": "Hague System for international industrial designs (WIPO)",
+      "verifyUrl": "https://www.wipo.int/hague/en/",
+      "text": "Hague System, summary. The Hague System, administered by WIPO, lets a design owner obtain protection for an industrial design in several member jurisdictions through a single international application. It is relevant to packaging, bottle and container shapes for Ayurvedic products. Check the WIPO member list to confirm which jurisdictions, including India and your target markets, are covered before relying on it."
+    },
+    {
+      "id": "budapest",
+      "label": "Budapest Treaty on deposit of micro-organisms",
+      "verifyUrl": "https://www.wipo.int/treaties/en/registration/budapest/",
+      "text": "Budapest Treaty, summary. Where an invention involves a micro-organism that cannot be described well enough in words, the patent applicant may need to deposit a sample. Under the Budapest Treaty, a deposit made with one International Depositary Authority is recognised for patent procedure purposes by all member states, so a separate deposit in each country is not needed. This matters for probiotic or fermentation-based Ayurvedic products (for example asava and arishta strains)."
+    },
+    {
+      "id": "eu_thmpd",
+      "label": "EU: Traditional Herbal Medicinal Products Directive 2004/24/EC",
+      "verifyUrl": "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+      "text": "European Union market access for herbal products, summary. Directive 2004/24/EC created a simplified registration route for traditional herbal medicinal products. In general the applicant must show medicinal use for at least 30 years, of which at least 15 years within the EU, and the product must meet quality and safety requirements. The route is aimed at products used without a doctor's supervision for diagnosis or treatment. Many Ayurvedic products are instead sold in the EU as food supplements or cosmetics. Which route applies depends on the claims made and the ingredients, and each member state's rules differ, so check with the national competent authority."
+    },
+    {
+      "id": "eu_abs",
+      "label": "EU ABS Regulation (EU) No 511/2014",
+      "verifyUrl": "https://environment.ec.europa.eu/topics/nature-and-biodiversity/access-and-benefit-sharing_en",
+      "text": "EU ABS Regulation 511/2014, summary. This regulation implements the compliance part of the Nagoya Protocol in the EU. Users of genetic resources, and of traditional knowledge associated with them, that were accessed after the Protocol entered into force must exercise due diligence to make sure access was lawful under the provider country's ABS rules. Users must keep the relevant documents (for example permits or the internationally recognised certificate of compliance) and submit a due diligence declaration at defined stages, such as receipt of research funding and final development of a product. An Indian exporter of plant-based products to the EU may be asked by the EU buyer for this documentation."
+    },
+    {
+      "id": "us_dshea",
+      "label": "US: dietary supplements (DSHEA 1994)",
+      "verifyUrl": "https://www.fda.gov/food/dietary-supplements",
+      "text": "United States market access for herbal products, summary. In the US, many Ayurvedic herbal products are marketed as dietary supplements under the Dietary Supplement Health and Education Act of 1994 (DSHEA). Supplements do not need FDA pre-market approval as drugs, but they must follow FDA rules on good manufacturing practice, labelling and safety, must not claim to diagnose, treat, cure or prevent disease, and a new dietary ingredient may need a notification to FDA. A product presented as treating disease can be treated as an unapproved drug. Confirm the current rules with FDA and a US regulatory adviser."
+    },
+    {
+      "id": "tkdl_access",
+      "label": "TKDL access agreements with patent offices (as reported in 2012)",
+      "verifyUrl": "http://www.tkdl.res.in",
+      "text": "TKDL access agreements, summary based on a 2012 review article (Chaudhary and Singh, AYU 33(1), page 25). India's Traditional Knowledge Digital Library (TKDL) was opened to examiners at the European Patent Office under an access agreement signed in February 2009, and a similar agreement with the US Patent and Trademark Office followed in November 2009, with non-disclosure safeguards: examiners may use the database for search and examination, and may reveal content to third parties only where needed for citation. The article reports that in the first year after July 2009 the TKDL team identified 36 patent applications at the EPO that concerned Indian systems of medicine; in two the EPO withdrew its intention to grant, and in eleven applicants withdrew. Figures differ across sources and are dated; check the TKDL website and CSIR for current numbers and the current list of partner offices. The TKDL is a defensive database for patent examiners and is not openly searchable by the public."
+    }
+  ]
+}

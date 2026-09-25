@@ -1,0 +1,212 @@
+{
+ "PA_3P": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p12:c1",
+  "page": 12,
+  "verified": true
+ },
+ "PA_3D": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p11:c2",
+  "page": 11,
+  "verified": true
+ },
+ "PA_3J": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p12:c0",
+  "page": 12,
+  "verified": true
+ },
+ "PA_3E": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p12:c0",
+  "page": 12,
+  "verified": true
+ },
+ "PA_TERM": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p32:c2",
+  "page": 32,
+  "verified": true
+ },
+ "PA_INVENTIVE": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p10:c0",
+  "page": 10,
+  "verified": true
+ },
+ "PA_25_TK": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p23:c0",
+  "page": 23,
+  "verified": true
+ },
+ "PA_25_BIO": {
+  "docId": "patents_act_current",
+  "chunkId": "patents_act_current:p23:c0",
+  "page": 23,
+  "verified": true
+ },
+ "DC_AUTH_BOOKS": {
+  "docId": "dc_act_1940",
+  "chunkId": "dc_act_1940:p7:c0",
+  "page": 7,
+  "verified": true
+ },
+ "DC_PROPRIETARY": {
+  "docId": "dc_act_1940",
+  "chunkId": "dc_act_1940:p8:c2",
+  "page": 8,
+  "verified": true
+ },
+ "DC_COSMETIC": {
+  "docId": "dc_act_1940",
+  "chunkId": "dc_act_1940:p7:c1",
+  "page": 7,
+  "verified": true
+ },
+ "DC_CH4A": {
+  "docId": "dc_act_1940",
+  "chunkId": "dc_act_1940:p4:c1",
+  "page": 4,
+  "verified": true
+ },
+ "BD_CODIFIED": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p2:c2",
+  "page": 2,
+  "verified": true
+ },
+ "BD_S7": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p4:c3",
+  "page": 4,
+  "verified": true
+ },
+ "BD_S7_EXEMPT": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p4:c3",
+  "page": 4,
+  "verified": true
+ },
+ "BD_S7_CULT": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p4:c3",
+  "page": 4,
+  "verified": true
+ },
+ "BD_S6_1": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p4:c1",
+  "page": 4,
+  "verified": true
+ },
+ "BD_S6_1A": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p4:c1",
+  "page": 4,
+  "verified": true
+ },
+ "BD_S6_1B": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p4:c2",
+  "page": 4,
+  "verified": true
+ },
+ "BD_S4": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p3:c2",
+  "page": 3,
+  "verified": true
+ },
+ "BD_S3_FOREIGN": {
+  "docId": "bd_amend_act_2023",
+  "chunkId": "bd_amend_act_2023:p3:c1",
+  "page": 3,
+  "verified": true
+ },
+ "BD_S3_BASE": {
+  "docId": "bd_act_2002",
+  "chunkId": "bd_act_2002:p6:c1",
+  "page": 6,
+  "verified": true
+ },
+ "BD_COMMENCE": {
+  "docId": "bd_amend_commencement",
+  "chunkId": "bd_amend_commencement:p1:c0",
+  "page": 1,
+  "verified": true
+ },
+ "ABS_TABLE": {
+  "docId": "nba_abs_regs_2025",
+  "chunkId": "nba_abs_regs_2025:p17:c1",
+  "page": 17,
+  "verified": true
+ },
+ "ABS_FORM_A": {
+  "docId": "nba_abs_regs_2025",
+  "chunkId": "nba_abs_regs_2025:p17:c2",
+  "page": 17,
+  "verified": true
+ },
+ "ABS_DEEMED": {
+  "docId": "nba_abs_regs_2025",
+  "chunkId": "nba_abs_regs_2025:p17:c4",
+  "page": 17,
+  "verified": true
+ },
+ "ABS_COLLECTION": {
+  "docId": "nba_abs_regs_2025",
+  "chunkId": "nba_abs_regs_2025:p18:c4",
+  "page": 18,
+  "verified": true
+ },
+ "ABS_HIGHVALUE": {
+  "docId": "nba_abs_regs_2025",
+  "chunkId": "nba_abs_regs_2025:p17:c0",
+  "page": 17,
+  "verified": true
+ },
+ "ABS_RESEARCH_RESULTS": {
+  "docId": "nba_abs_regs_2025",
+  "chunkId": "nba_abs_regs_2025:p19:c0",
+  "page": 19,
+  "verified": true
+ },
+ "TM_TERM": {
+  "docId": "tm_act_1999",
+  "chunkId": "tm_act_1999:p13:c3",
+  "page": 13,
+  "verified": true
+ },
+ "TM_MARK_DEF": {
+  "docId": "tm_act_1999",
+  "chunkId": "tm_act_1999:p3:c0",
+  "page": 3,
+  "verified": true
+ },
+ "DES_DEF": {
+  "docId": "designs_act_2000",
+  "chunkId": "designs_act_2000:p1:c2",
+  "page": 1,
+  "verified": true
+ },
+ "DES_TERM": {
+  "docId": "designs_act_2000",
+  "chunkId": "designs_act_2000:p5:c0",
+  "page": 5,
+  "verified": true
+ },
+ "GI_DEF": {
+  "docId": "gi_act_1999",
+  "chunkId": "gi_act_1999:p2:c1",
+  "page": 2,
+  "verified": true
+ },
+ "GI_TERM": {
+  "docId": "gi_act_1999",
+  "chunkId": "gi_act_1999:p10:c1",
+  "page": 10,
+  "verified": true
+ }
+}

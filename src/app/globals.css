@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  IP-SAKTI Sahayak design system - "Palm-leaf ledger"
+  Idea: an old Indian legal ledger (bahi-khata) re-cut for a modern screen -
+  warm parchment paper, deep neem-leaf green as the working colour, turmeric as
+  the single accent, a serif display face for headings and a monospaced "legal"
+  face for statute citations, so a citation always visually reads as a citation.
+*/
+
+:root {
+  --paper: 251 247 238;
+  --surface: 255 253 247;
+  --sunk: 243 236 220;
+  --ink: 34 30 22;
+  --muted: 111 101 84;
+  --line: 224 213 189;
+  --shadow: 60 45 20;
+
+  --neem: 45 92 66;
+  --neem-soft: 214 230 217;
+  --neem-ink: 20 40 30;
+
+  --turmeric: 201 129 27;
+  --turmeric-soft: 250 231 191;
+  --turmeric-ink: 92 58 8;
+
+  --indigo: 55 70 130;
+  --indigo-soft: 220 224 244;
+  --indigo-ink: 26 32 64;
+
+  --sindoor: 178 55 45;
+  --sindoor-soft: 248 220 214;
+}
+
+:root[data-theme="dark"] {
+  --paper: 17 22 19;
+  --surface: 22 28 24;
+  --sunk: 14 18 16;
+  --ink: 231 231 222;
+  --muted: 158 163 150;
+  --line: 46 55 47;
+  --shadow: 0 0 0;
+
+  --neem: 122 189 150;
+  --neem-soft: 30 48 37;
+  --neem-ink: 214 236 220;
+
+  --turmeric: 224 168 74;
+  --turmeric-soft: 54 42 18;
+  --turmeric-ink: 247 224 178;
+
+  --indigo: 140 155 224;
+  --indigo-soft: 34 38 58;
+  --indigo-ink: 214 220 248;
+
+  --sindoor: 224 120 108;
+  --sindoor-soft: 54 26 22;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: 17 22 19;
+    --surface: 22 28 24;
+    --sunk: 14 18 16;
+    --ink: 231 231 222;
+    --muted: 158 163 150;
+    --line: 46 55 47;
+    --shadow: 0 0 0;
+    --neem: 122 189 150;
+    --neem-soft: 30 48 37;
+    --neem-ink: 214 236 220;
+    --turmeric: 224 168 74;
+    --turmeric-soft: 54 42 18;
+    --turmeric-ink: 247 224 178;
+    --indigo: 140 155 224;
+    --indigo-soft: 34 38 58;
+    --indigo-ink: 214 220 248;
+    --sindoor: 224 120 108;
+    --sindoor-soft: 54 26 22;
+  }
+}
+
+* { border-color: rgb(var(--line)); }
+
+html, body { height: 100%; background: rgb(var(--paper)); }
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+
+body {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgb(var(--line) / 0.4) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+::selection { background: rgb(var(--turmeric-soft)); color: rgb(var(--turmeric-ink)); }
+
+/* Citation chip: every legal fact renders through this so it always looks load-bearing */
+.cite {
+  font-family: var(--font-legal);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: rgb(var(--neem-soft));
+  color: rgb(var(--neem-ink));
+  border: 1px solid rgb(var(--neem) / 0.35);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.cite:hover { background: rgb(var(--neem) / 0.22); transform: translateY(-1px); }
+
+.card {
+  background: rgb(var(--surface));
+  border: 1px solid rgb(var(--line));
+  border-radius: 1rem;
+  box-shadow: 0 1px 0 rgb(var(--line)), 0 12px 30px -20px rgb(var(--shadow) / 0.35);
+}
+
+.paper-texture {
+  background-image: linear-gradient(180deg, rgb(var(--surface)) 0%, rgb(var(--paper)) 100%);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, rgb(var(--sunk)) 25%, rgb(var(--line)) 37%, rgb(var(--sunk)) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+.scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 999px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}
