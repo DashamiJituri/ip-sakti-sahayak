@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { LanguageProvider } from "@/components/LanguageProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import FallingLeaves from "@/components/FallingLeaves";
 
 export const metadata: Metadata = {
   title: "IP-SAKTI Sahayak — Ayurveda IP & Regulatory Assistant",
@@ -12,8 +15,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf7ee" },
-    { media: "(prefers-color-scheme: dark)", color: "#14201a" },
+    { media: "(prefers-color-scheme: light)", color: "#eef7ef" },
+    { media: "(prefers-color-scheme: dark)", color: "#09110b" },
   ],
 };
 
@@ -30,7 +33,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="font-sans bg-paper text-ink antialiased">{children}</body>
+      <body className="font-sans bg-paper text-ink antialiased">
+        <ThemeProvider>
+          <LanguageProvider>
+            <FallingLeaves />
+            <div className="relative z-[1]">{children}</div>
+          </LanguageProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

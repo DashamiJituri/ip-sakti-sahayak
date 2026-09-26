@@ -2,19 +2,20 @@
 import { Info, ShieldCheck, GitBranch, Layers3 } from "lucide-react";
 import Shell from "@/components/Shell";
 import { Pill } from "@/components/ui";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function AboutPage() {
+  const { t } = useLanguage();
   return (
     <Shell>
       <div className="max-w-2xl mx-auto px-4 md:px-8 py-10 space-y-8">
         <div>
           <div className="flex items-center gap-2 text-neem mb-2">
-            <Info className="w-5 h-5" /> <span className="text-sm font-medium">About</span>
+            <Info className="w-5 h-5" /> <span className="text-sm font-medium">{t.about.badge}</span>
           </div>
-          <h1 className="font-display font-bold text-2xl mb-3">IP-SAKTI Sahayak</h1>
+          <h1 className="font-display font-bold text-2xl mb-3">{t.about.title}</h1>
           <p className="text-muted text-sm leading-relaxed">
-            A multilingual, retrieval-augmented assistant for Intellectual Property and regulatory guidance in Ayurveda, across national and international
-            regimes. Built for Smart India Hackathon, problem statement <strong>SIH26045</strong>, Ministry of Ayush.
+            {t.about.intro} Built for Smart India Hackathon, problem statement <strong>SIH26045</strong>, Ministry of Ayush.
           </p>
         </div>
 

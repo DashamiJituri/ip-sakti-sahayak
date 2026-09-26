@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ShieldCheck, ArrowRight, ExternalLink } from "lucide-react";
 import Shell from "@/components/Shell";
 import { Pill } from "@/components/ui";
+import { useLanguage } from "@/components/LanguageProvider";
 
 const ACTORS = [
   { v: "indian_citizen_or_company", l: "Indian citizen / India-registered company" },
@@ -26,6 +27,7 @@ interface Result {
 }
 
 export default function AbsPage() {
+  const { t } = useLanguage();
   const [actorType, setActorType] = useState(ACTORS[0].v);
   const [activity, setActivity] = useState(ACTIVITIES[0].v);
   const [usesCodifiedTK, setUsesCodifiedTK] = useState(false);
@@ -48,17 +50,14 @@ export default function AbsPage() {
     <Shell>
       <div className="max-w-2xl mx-auto px-4 md:px-8 py-10">
         <div className="flex items-center gap-2 text-neem mb-2">
-          <ShieldCheck className="w-5 h-5" /> <span className="text-sm font-medium">Access & Benefit-Sharing helper</span>
+          <ShieldCheck className="w-5 h-5" /> <span className="text-sm font-medium">{t.abs.badge}</span>
         </div>
-        <h1 className="font-display font-bold text-2xl mb-2">What do I owe the NBA / State Board?</h1>
-        <p className="text-muted mb-6 text-sm">
-          Based on the Biological Diversity Act as amended in 2023 and the NBA ABS Regulations 2025. This flags which obligation applies — it does not file
-          anything for you.
-        </p>
+        <h1 className="font-display font-bold text-2xl mb-2">{t.abs.title}</h1>
+        <p className="text-muted mb-6 text-sm">{t.abs.desc}</p>
 
         <div className="card p-5 space-y-5">
           <div>
-            <label className="text-sm font-medium block mb-2">Who are you?</label>
+            <label className="text-sm font-medium block mb-2">{t.abs.who}</label>
             <div className="grid gap-2">
               {ACTORS.map((a) => (
                 <label key={a.v} className="flex items-center gap-2.5 text-sm px-3 py-2.5 rounded-xl border border-line has-[:checked]:border-neem has-[:checked]:bg-neem-soft cursor-pointer">
@@ -70,7 +69,7 @@ export default function AbsPage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium block mb-2">What are you doing with the biological resource?</label>
+            <label className="text-sm font-medium block mb-2">{t.abs.doing}</label>
             <select value={activity} onChange={(e) => setActivity(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-line bg-surface text-sm">
               {ACTIVITIES.map((a) => (
                 <option key={a.v} value={a.v}>
@@ -82,16 +81,16 @@ export default function AbsPage() {
 
           <label className="flex items-center gap-2.5 text-sm">
             <input type="checkbox" checked={usesCodifiedTK} onChange={(e) => setUsesCodifiedTK(e.target.checked)} />
-            This also draws on codified traditional knowledge (a documented formulation from a recognised text/database)
+            {t.abs.codifiedTk}
           </label>
 
           <div>
-            <label className="text-sm font-medium block mb-2">Species / resource name (optional — e.g. sandalwood, neem)</label>
+            <label className="text-sm font-medium block mb-2">{t.abs.species}</label>
             <input value={species} onChange={(e) => setSpecies(e.target.value)} placeholder="e.g. Santalum album / sandalwood" className="w-full px-3 py-2.5 rounded-xl border border-line bg-surface text-sm" />
           </div>
 
           <button onClick={run} disabled={loading} className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-neem text-white font-medium shadow-lift disabled:opacity-50">
-            {loading ? "Checking…" : "Check requirement"} <ArrowRight className="w-4 h-4" />
+            {loading ? t.abs.checking : t.abs.check} <ArrowRight className="w-4 h-4" />
           </button>
         </div>
 
@@ -108,7 +107,7 @@ export default function AbsPage() {
 
             {result.citations.length > 0 && (
               <div className="mt-4 pt-4 border-t border-line">
-                <p className="text-xs font-medium text-muted mb-2">Backed by:</p>
+                <p className="text-xs font-medium text-muted mb-2">{t.abs.backedBy}</p>
                 <div className="space-y-2">
                   {result.citations.map((c, i) => (
                     <div key={i} className="text-xs bg-sunk rounded-lg p-2.5">
@@ -126,7 +125,7 @@ export default function AbsPage() {
             </a>
           </div>
         )}
-        <p className="text-[11px] text-muted mt-4">Information, not legal advice. Confirm procedure with the NBA / State Biodiversity Board before acting.</p>
+        <p className="text-[11px] text-muted mt-4">{t.abs.disclaimer}</p>
       </div>
     </Shell>
   );

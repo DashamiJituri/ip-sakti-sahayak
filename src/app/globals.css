@@ -3,25 +3,29 @@
 @tailwind utilities;
 
 /*
-  IP-SAKTI Sahayak design system - "Palm-leaf ledger"
-  Idea: an old Indian legal ledger (bahi-khata) re-cut for a modern screen -
-  warm parchment paper, deep neem-leaf green as the working colour, turmeric as
-  the single accent, a serif display face for headings and a monospaced "legal"
-  face for statute citations, so a citation always visually reads as a citation.
+  IP-SAKTI Sahayak design system - "Living forest"
+  A canopy-green re-theme: soft moss/mint surfaces, deep forest-green as the working colour,
+  turmeric-gold as the single warm accent (sunlight through leaves), a serif display face for
+  headings and a monospaced "legal" face for statute citations, plus a drifting falling-leaves
+  layer behind every screen (see FallingLeaves.tsx + .leaf-scene / .leaf-fall below).
 */
 
 :root {
-  --paper: 251 247 238;
-  --surface: 255 253 247;
-  --sunk: 243 236 220;
-  --ink: 34 30 22;
-  --muted: 111 101 84;
-  --line: 224 213 189;
-  --shadow: 60 45 20;
+  --paper: 238 247 239;
+  --surface: 250 253 250;
+  --sunk: 224 238 225;
+  --ink: 18 32 21;
+  --muted: 90 109 91;
+  --line: 196 220 198;
+  --shadow: 14 30 18;
 
-  --neem: 45 92 66;
-  --neem-soft: 214 230 217;
-  --neem-ink: 20 40 30;
+  --neem: 27 100 61;
+  --neem-soft: 205 233 210;
+  --neem-ink: 12 48 27;
+
+  --moss: 99 138 61;
+  --moss-soft: 223 233 197;
+  --moss-ink: 45 65 28;
 
   --turmeric: 201 129 27;
   --turmeric-soft: 250 231 191;
@@ -36,17 +40,21 @@
 }
 
 :root[data-theme="dark"] {
-  --paper: 17 22 19;
-  --surface: 22 28 24;
-  --sunk: 14 18 16;
-  --ink: 231 231 222;
-  --muted: 158 163 150;
-  --line: 46 55 47;
+  --paper: 9 17 11;
+  --surface: 14 25 16;
+  --sunk: 7 13 8;
+  --ink: 222 235 222;
+  --muted: 150 169 150;
+  --line: 32 52 34;
   --shadow: 0 0 0;
 
-  --neem: 122 189 150;
-  --neem-soft: 30 48 37;
-  --neem-ink: 214 236 220;
+  --neem: 112 202 142;
+  --neem-soft: 22 50 30;
+  --neem-ink: 210 240 216;
+
+  --moss: 170 198 112;
+  --moss-soft: 38 52 22;
+  --moss-ink: 222 234 182;
 
   --turmeric: 224 168 74;
   --turmeric-soft: 54 42 18;
@@ -62,16 +70,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: 17 22 19;
-    --surface: 22 28 24;
-    --sunk: 14 18 16;
-    --ink: 231 231 222;
-    --muted: 158 163 150;
-    --line: 46 55 47;
+    --paper: 9 17 11;
+    --surface: 14 25 16;
+    --sunk: 7 13 8;
+    --ink: 222 235 222;
+    --muted: 150 169 150;
+    --line: 32 52 34;
     --shadow: 0 0 0;
-    --neem: 122 189 150;
-    --neem-soft: 30 48 37;
-    --neem-ink: 214 236 220;
+    --neem: 112 202 142;
+    --neem-soft: 22 50 30;
+    --neem-ink: 210 240 216;
+    --moss: 170 198 112;
+    --moss-soft: 38 52 22;
+    --moss-ink: 222 234 182;
     --turmeric: 224 168 74;
     --turmeric-soft: 54 42 18;
     --turmeric-ink: 247 224 178;
@@ -91,11 +102,42 @@ html { scroll-padding-top: env(safe-area-inset-top, 0px); }
 
 body {
   background-image:
-    radial-gradient(circle at 1px 1px, rgb(var(--line) / 0.4) 1px, transparent 0);
-  background-size: 22px 22px;
+    radial-gradient(circle at 1px 1px, rgb(var(--line) / 0.35) 1px, transparent 0),
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgb(var(--neem-soft) / 0.6), transparent 60%);
+  background-size: 22px 22px, 100% 100%;
+  position: relative;
 }
 
 ::selection { background: rgb(var(--turmeric-soft)); color: rgb(var(--turmeric-ink)); }
+
+/* Falling-leaves background layer (see components/FallingLeaves.tsx) */
+.leaf-scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.leaf-fall {
+  position: absolute;
+  top: -8vh;
+  display: block;
+  filter: drop-shadow(0 2px 3px rgb(var(--shadow) / 0.15));
+  animation-name: leaf-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@keyframes leaf-fall {
+  0%   { transform: translate(0, -8vh) rotate(0deg); }
+  25%  { transform: translate(var(--drift), 27vh) rotate(calc(100deg * var(--spin))); }
+  50%  { transform: translate(calc(var(--drift) * -0.6), 55vh) rotate(calc(200deg * var(--spin))); }
+  75%  { transform: translate(var(--drift), 82vh) rotate(calc(300deg * var(--spin))); }
+  100% { transform: translate(0, 112vh) rotate(calc(360deg * var(--spin))); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .leaf-fall { animation: none; display: none; }
+}
 
 /* Citation chip: every legal fact renders through this so it always looks load-bearing */
 .cite {
@@ -116,7 +158,8 @@ body {
 .cite:hover { background: rgb(var(--neem) / 0.22); transform: translateY(-1px); }
 
 .card {
-  background: rgb(var(--surface));
+  background: rgb(var(--surface) / 0.92);
+  backdrop-filter: blur(6px);
   border: 1px solid rgb(var(--line));
   border-radius: 1rem;
   box-shadow: 0 1px 0 rgb(var(--line)), 0 12px 30px -20px rgb(var(--shadow) / 0.35);
@@ -138,5 +181,6 @@ body {
 
 @media print {
   .no-print { display: none !important; }
+  .leaf-scene { display: none !important; }
   body { background: white; }
 }

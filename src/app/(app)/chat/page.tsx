@@ -1,22 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Send, Globe2, Landmark, Layers, Languages, AlertTriangle, Mail, Loader2, Sparkles } from "lucide-react";
+import { Send, Globe2, Landmark, Layers, AlertTriangle, Mail, Loader2, Sparkles, Copy, Check, X } from "lucide-react";
 import clsx from "clsx";
 import Shell from "@/components/Shell";
 import { ConfidenceBadge, Pill } from "@/components/ui";
 import SourceDrawer from "@/components/SourceDrawer";
 import { CitationText, InlineSourceChips } from "@/components/CitationText";
-import type { ChatResponse, Jurisdiction, Lang, SourceRef } from "@/lib/types";
-
-const LANGS: { code: Lang; label: string }[] = [
-  { code: "en", label: "English" },
-  { code: "hi", label: "हिन्दी" },
-  { code: "mr", label: "मराठी" },
-  { code: "ta", label: "தமிழ்" },
-  { code: "te", label: "తెలుగు" },
-  { code: "kn", label: "ಕನ್ನಡ" },
-  { code: "ml", label: "മലയാളം" },
-];
+import { useLanguage } from "@/components/LanguageProvider";
+import type { ChatResponse, Jurisdiction, SourceRef } from "@/lib/types";
 
 const SUGGESTIONS = [
   "Can I patent an Ayurvedic churna that exactly matches a formula in the Sharangdhara Samhita?",
@@ -34,11 +25,14 @@ interface Turn {
 }
 
 export default function ChatPage() {
+  const { lang, t } = useLanguage();
   const [jurisdiction, setJurisdiction] = useState<Jurisdiction>("india");
-  const [language, setLanguage] = useState<Lang>("en");
   const [input, setInput] = useState("");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [drawer, setDrawer] = useState<SourceRef | null>(null);
+  const [escalation, setEscalation] = useState<{ id: string; mailto: string; to: string; subject: string; body: string } | null>(null);
+  const [escalating, setEscalating] = useState(false);
+  const [escalateError, setEscalateError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,18 +43,18 @@ export default function ChatPage() {
     const question = q.trim();
     if (!question) return;
     setInput("");
-    setTurns((t) => [...t, { question, loading: true }]);
+    setTurns((t2) => [...t2, { question, loading: true }]);
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, jurisdiction, language }),
+        body: JSON.stringify({ question, jurisdiction, language: lang }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Request failed");
-      setTurns((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, response: data, loading: false } : x)));
+      setTurns((t2) => t2.map((x, i) => (i === t2.length - 1 ? { ...x, response: data, loading: false } : x)));
     } catch (e) {
-      setTurns((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, error: e instanceof Error ? e.message : "Something went wrong.", loading: false } : x)));
+      setTurns((t2) => t2.map((x, i) => (i === t2.length - 1 ? { ...x, error: e instanceof Error ? e.message : "Something went wrong.", loading: false } : x)));
     }
   }
 
@@ -75,34 +69,17 @@ export default function ChatPage() {
           <div className="max-w-3xl mx-auto flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div>
-                <h1 className="font-display font-bold text-xl">Ask IP-SAKTI</h1>
-                <p className="text-xs text-muted mt-0.5">Every legal statement is traceable to a cited passage. This is information, not legal advice.</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <Languages className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value as Lang)}
-                    className="appearance-none pl-8 pr-3 py-2 rounded-xl border border-line bg-surface text-sm font-medium"
-                    aria-label="Answer language"
-                  >
-                    {LANGS.map((l) => (
-                      <option key={l.code} value={l.code}>
-                        {l.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <h1 className="font-display font-bold text-xl">{t.chat.title}</h1>
+                <p className="text-xs text-muted mt-0.5">{t.chat.subtitle}</p>
               </div>
             </div>
 
             <div role="radiogroup" aria-label="Jurisdiction" className="inline-flex p-1 rounded-2xl bg-sunk border border-line self-start">
               {(
                 [
-                  { v: "india", label: "India", icon: Landmark },
-                  { v: "international", label: "International", icon: Globe2 },
-                  { v: "both", label: "Both (kept separate)", icon: Layers },
+                  { v: "india", label: t.chat.india, icon: Landmark },
+                  { v: "international", label: t.chat.intl, icon: Globe2 },
+                  { v: "both", label: t.chat.both, icon: Layers },
                 ] as const
               ).map((opt) => {
                 const Icon = opt.icon;
@@ -133,7 +110,7 @@ export default function ChatPage() {
                 <div className="card p-6 mb-6">
                   <div className="flex items-center gap-2 text-neem mb-2">
                     <Sparkles className="w-4 h-4" />
-                    <span className="text-sm font-semibold">Try a question</span>
+                    <span className="text-sm font-semibold">{t.chat.tryQuestion}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {SUGGESTIONS.map((s) => (
@@ -144,34 +121,42 @@ export default function ChatPage() {
                   </div>
                 </div>
                 <p className="text-sm text-muted">
-                  Tip: for a full patentability read on a specific product, first use{" "}
+                  {t.chat.tip}{" "}
                   <a href="/classify" className="text-neem underline">
-                    Classify my product
+                    {t.chat.tipLink}
                   </a>{" "}
                   — the category changes which rules apply.
                 </p>
               </div>
             )}
 
-            {turns.map((t, i) => (
+            {turns.map((tn, i) => (
               <div key={i} className="space-y-3 animate-rise">
                 <div className="flex justify-end">
-                  <div className="max-w-[85%] bg-neem text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm shadow-lift">{t.question}</div>
+                  <div className="max-w-[85%] bg-neem text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm shadow-lift">{tn.question}</div>
                 </div>
 
-                {t.loading && (
+                {tn.loading && (
                   <div className="flex items-center gap-2 text-muted text-sm pl-1">
-                    <Loader2 className="w-4 h-4 animate-spin" /> Searching the statute corpus and drafting a cited answer…
+                    <Loader2 className="w-4 h-4 animate-spin" /> {t.chat.searching}
                   </div>
                 )}
 
-                {t.error && (
+                {tn.error && (
                   <div className="flex items-start gap-2 text-sm text-sindoor bg-sindoor-soft rounded-xl p-3">
-                    <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" /> {t.error}
+                    <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" /> {tn.error}
                   </div>
                 )}
 
-                {t.response && <AnswerBlock response={t.response} onOpen={(sources, id) => openSource(sources, id)} onEscalate={(q) => escalate(q)} />}
+                {tn.response && (
+                  <AnswerBlock
+                    response={tn.response}
+                    onOpen={(sources, id) => openSource(sources, id)}
+                    onEscalate={(q) => escalate(q)}
+                    escalating={escalating}
+                    t={t}
+                  />
+                )}
               </div>
             ))}
             <div ref={endRef} />
@@ -196,53 +181,128 @@ export default function ChatPage() {
                 }
               }}
               rows={1}
-              placeholder="Ask about patents, GI, trade marks, ABS, licensing… (Shift+Enter for a new line)"
+              placeholder={t.chat.placeholder}
               className="flex-1 resize-none max-h-36 rounded-2xl border border-line bg-surface px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-neem/40"
             />
             <button type="submit" className="p-3 rounded-2xl bg-neem text-white shadow-lift hover:opacity-90 disabled:opacity-40" disabled={!input.trim()}>
               <Send className="w-5 h-5" />
             </button>
           </form>
-          <p className="max-w-3xl mx-auto text-[11px] text-muted mt-2">Information, not legal advice. Verify anything material before filing or launch.</p>
+          <p className="max-w-3xl mx-auto text-[11px] text-muted mt-2">{t.chat.footer}</p>
         </footer>
       </div>
 
       <SourceDrawer source={drawer} onClose={() => setDrawer(null)} />
+      {escalateError && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 text-sm bg-sindoor-soft text-sindoor rounded-xl px-4 py-2.5 shadow-lift">
+          {escalateError}
+        </div>
+      )}
+      {escalation && <EscalationPanel escalation={escalation} onClose={() => setEscalation(null)} />}
     </Shell>
   );
 
   async function escalate(question: string) {
+    setEscalating(true);
+    setEscalateError(null);
     try {
       const res = await fetch("/api/escalate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, context: `jurisdiction=${jurisdiction} language=${language}` }),
+        body: JSON.stringify({ question, context: `jurisdiction=${jurisdiction} language=${lang}` }),
       });
       const data = await res.json();
-      if (data.mailto) window.location.href = data.mailto;
-    } catch {
-      /* best effort */
+      if (!res.ok) throw new Error(data.error || "Could not log the escalation.");
+      // Show a panel with the drafted message instead of only firing a
+      // mailto: redirect — on a machine with no default mail app configured
+      // (common on Windows), window.location.href = "mailto:..." does
+      // nothing visible at all, which looks like the button is broken. The
+      // panel below always gives the user something they can act on: a real
+      // link to try, and a copy button as a guaranteed fallback.
+      setEscalation({ id: data.id, mailto: data.mailto, to: data.to, subject: data.subject, body: data.body });
+    } catch (e) {
+      setEscalateError(e instanceof Error ? e.message : "Could not log the escalation. Please try again.");
+    } finally {
+      setEscalating(false);
     }
   }
 }
 
-function AnswerBlock({ response, onOpen, onEscalate }: { response: ChatResponse; onOpen: (sources: Record<string, SourceRef>, id: string) => void; onEscalate: (q: string) => void }) {
+function EscalationPanel({ escalation, onClose }: { escalation: { id: string; mailto: string; to: string; subject: string; body: string }; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(`To: ${escalation.to}\nSubject: ${escalation.subject}\n\n${escalation.body}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* clipboard may be unavailable; the text is still visible below to select manually */
+    }
+  }
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div className="card w-full max-w-md p-5 space-y-3" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-sm font-semibold">Escalation logged — case {escalation.id}</p>
+            <p className="text-xs text-muted mt-1">
+              If your email app didn&apos;t open automatically, copy this message and send it yourself to{" "}
+              <span className="font-medium">{escalation.to}</span>.
+            </p>
+          </div>
+          <button onClick={onClose} className="shrink-0 text-muted hover:text-ink">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <pre className="text-xs bg-sunk rounded-xl p-3 whitespace-pre-wrap max-h-48 overflow-y-auto font-sans">
+          {`To: ${escalation.to}\nSubject: ${escalation.subject}\n\n${escalation.body}`}
+        </pre>
+        <div className="flex gap-2">
+          <button onClick={copy} className="flex-1 inline-flex items-center justify-center gap-1.5 text-sm px-3 py-2 rounded-xl bg-neem text-white hover:opacity-90">
+            {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />} {copied ? "Copied" : "Copy message"}
+          </button>
+          <a href={escalation.mailto} className="flex-1 inline-flex items-center justify-center gap-1.5 text-sm px-3 py-2 rounded-xl border border-line hover:bg-sunk">
+            <Mail className="w-3.5 h-3.5" /> Open email app
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AnswerBlock({
+  response,
+  onOpen,
+  onEscalate,
+  escalating,
+  t,
+}: {
+  response: ChatResponse;
+  onOpen: (sources: Record<string, SourceRef>, id: string) => void;
+  onEscalate: (q: string) => void;
+  escalating: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
   if (response.mode === "abstain") {
     return (
       <div className="card p-4 border-sindoor/30">
         <div className="flex items-start gap-2.5">
           <AlertTriangle className="w-5 h-5 text-sindoor shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-medium">This isn&apos;t clearly answered in the indexed documents.</p>
+            <p className="text-sm font-medium">{t.chat.abstainTitle}</p>
             <p className="text-sm text-muted mt-1">
-              To avoid guessing, I&apos;m not generating an answer here. Try rephrasing, check{" "}
+              {t.chat.abstainBody}{" "}
               <a href="/sources" className="text-neem underline">
-                the corpus
-              </a>{" "}
-              to see what is indexed, or escalate to a human IP facilitator.
+                {t.chat.abstainLink}
+              </a>
+              .
             </p>
-            <button onClick={() => onEscalate(response.englishQuery || "")} className="mt-3 inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl bg-sindoor text-white">
-              <Mail className="w-3.5 h-3.5" /> Escalate to a human IP facilitator
+            <button
+              onClick={() => onEscalate(response.englishQuery || "")}
+              disabled={escalating}
+              className="mt-3 inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-xl bg-sindoor text-white disabled:opacity-60"
+            >
+              {escalating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />} {t.chat.escalate}
             </button>
           </div>
         </div>
@@ -263,7 +323,11 @@ function AnswerBlock({ response, onOpen, onEscalate }: { response: ChatResponse;
           <div key={i} className="card p-4">
             <div className="flex items-center justify-between mb-2">
               <Pill tone={a.jurisdiction === "india" ? "neem" : "indigo"}>{a.jurisdiction === "india" ? "🇮🇳 India" : "🌐 International"}</Pill>
-              {a.withheld > 0 && <span className="text-[11px] text-muted">{a.withheld} unverified statement(s) omitted</span>}
+              {a.withheld > 0 && (
+                <span className="text-[11px] text-muted">
+                  {a.withheld} {t.chat.withheld}
+                </span>
+              )}
             </div>
 
             {a.summary && <p className="text-sm text-muted mb-3 italic">{a.summary}</p>}
@@ -302,8 +366,12 @@ function AnswerBlock({ response, onOpen, onEscalate }: { response: ChatResponse;
       <div className="flex items-center justify-between flex-wrap gap-2">
         <ConfidenceBadge c={response.confidence} />
         {response.escalate && (
-          <button onClick={() => onEscalate(response.englishQuery || "")} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-line hover:bg-sunk">
-            <Mail className="w-3.5 h-3.5" /> Ask a human IP facilitator
+          <button
+            onClick={() => onEscalate(response.englishQuery || "")}
+            disabled={escalating}
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl border border-line hover:bg-sunk disabled:opacity-60"
+          >
+            {escalating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />} {t.chat.escalate}
           </button>
         )}
       </div>

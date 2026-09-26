@@ -1,41 +1,55 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { MessageSquare, ListChecks, ShieldCheck, Library, Info, Leaf, Moon, Sun, Menu, X } from "lucide-react";
+import { useState } from "react";
+import { MessageSquare, ListChecks, ShieldCheck, Library, Info, Leaf, Moon, Sun, Menu, X, Languages } from "lucide-react";
 import clsx from "clsx";
-
-const NAV = [
-  { href: "/chat", label: "Ask", icon: MessageSquare },
-  { href: "/classify", label: "Classify my product", icon: ListChecks },
-  { href: "/abs", label: "ABS helper", icon: ShieldCheck },
-  { href: "/sources", label: "Corpus & sources", icon: Library },
-  { href: "/about", label: "About", icon: Info },
-];
+import { useTheme } from "./ThemeProvider";
+import { useLanguage } from "./LanguageProvider";
+import { LANGUAGES } from "@/lib/i18n";
+import type { Lang } from "@/lib/types";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [dark, setDark] = useState(false);
+  const { dark, toggleTheme } = useTheme();
+  const { lang, setLang, t } = useLanguage();
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem("ipsakti-theme") : null;
-    const isDark = saved ? saved === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDark(isDark);
-    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-  }, []);
+  const NAV = [
+    { href: "/chat", label: t.nav.ask, icon: MessageSquare },
+    { href: "/classify", label: t.nav.classify, icon: ListChecks },
+    { href: "/abs", label: t.nav.abs, icon: ShieldCheck },
+    { href: "/sources", label: t.nav.sources, icon: Library },
+    { href: "/about", label: t.nav.about, icon: Info },
+  ];
 
-  function toggleTheme() {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
-    window.localStorage.setItem("ipsakti-theme", next ? "dark" : "light");
+  function LangSelect({ compact }: { compact?: boolean }) {
+    return (
+      <div className="relative">
+        <Languages className="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+        <select
+          value={lang}
+          onChange={(e) => setLang(e.target.value as Lang)}
+          className={clsx(
+            "appearance-none pl-8 pr-3 py-2 rounded-xl border border-line bg-surface text-sm font-medium",
+            compact ? "w-full" : ""
+          )}
+          aria-label="Language"
+        >
+          {LANGUAGES.map((l) => (
+            <option key={l.code} value={l.code}>
+              {l.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 bg-turmeric text-white px-3 py-1.5 rounded-lg">
-        Skip to content
+        {t.nav.skip}
       </a>
 
       <header className="md:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-paper/90 backdrop-blur border-b border-line">
@@ -54,7 +68,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
       <nav
         className={clsx(
-          "md:w-64 md:shrink-0 md:sticky md:top-0 md:h-screen border-r border-line bg-surface paper-texture flex-col px-4 py-6 gap-1",
+          "md:w-64 md:shrink-0 md:sticky md:top-0 md:h-screen border-r border-line bg-surface/90 backdrop-blur paper-texture flex-col px-4 py-6 gap-1",
           open ? "flex" : "hidden md:flex"
         )}
       >
@@ -66,6 +80,10 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             IP-SAKTI <span className="block text-xs font-sans font-normal text-muted -mt-0.5">Sahayak · SIH26045</span>
           </span>
         </Link>
+
+        <div className="md:hidden mb-3">
+          <LangSelect compact />
+        </div>
 
         <div className="flex flex-col gap-1">
           {NAV.map((n) => {
@@ -89,12 +107,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="mt-auto hidden md:flex flex-col gap-3 pt-6">
+          <LangSelect />
           <button onClick={toggleTheme} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-muted hover:bg-sunk hover:text-ink transition-colors">
-            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />} {dark ? "Light mode" : "Dark mode"}
+            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />} {dark ? t.nav.light : t.nav.dark}
           </button>
-          <p className="text-[11px] leading-relaxed text-muted px-3">
-            Information, not legal advice. Ministry of Ayush · Smart India Hackathon, PS 26045.
-          </p>
+          <p className="text-[11px] leading-relaxed text-muted px-3">{t.nav.footer}</p>
         </div>
       </nav>
 

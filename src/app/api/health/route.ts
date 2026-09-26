@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { corpusSize, allDocs } from "@/lib/retrieval";
-import { hasGemini } from "@/lib/gemini";
+import { hasGroq } from "@/lib/groq";
 import anchors from "../../../../data/anchors.json";
 
 export const runtime = "nodejs";
@@ -15,8 +15,7 @@ export async function GET() {
     primaryDocuments: docs.filter((d) => d.tier === "primary").length,
     anchorsTotal: anchorVals.length,
     anchorsVerified: anchorVals.filter((a) => a.verified).length,
-    geminiConfigured: hasGemini(),
-    bhashiniConfigured: Boolean(process.env.BHASHINI_UDYAT_KEY && process.env.BHASHINI_PIPELINE_ID),
+    aiConfigured: hasGroq(),
     time: new Date().toISOString(),
   });
 }

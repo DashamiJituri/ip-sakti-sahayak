@@ -4,15 +4,17 @@ import { Library, ExternalLink, FileText } from "lucide-react";
 import Shell from "@/components/Shell";
 import { Pill } from "@/components/ui";
 import DocGraph from "@/components/DocGraph";
+import { useLanguage } from "@/components/LanguageProvider";
 import type { DocMeta } from "@/lib/types";
 import docsJson from "../../../../data/docs.json";
 
 const DOCS = docsJson as unknown as DocMeta[];
 
 export default function SourcesPage() {
+  const { t } = useLanguage();
   const [docs] = useState<DocMeta[]>(DOCS);
   const [selected, setSelected] = useState<DocMeta | null>(null);
-  const [health, setHealth] = useState<{ corpusChunks: number; anchorsVerified: number; anchorsTotal: number; geminiConfigured: boolean } | null>(null);
+  const [health, setHealth] = useState<{ corpusChunks: number; anchorsVerified: number; anchorsTotal: number; aiConfigured: boolean } | null>(null);
 
   useEffect(() => {
     fetch("/api/health")
@@ -24,20 +26,17 @@ export default function SourcesPage() {
     <Shell>
       <div className="max-w-5xl mx-auto px-4 md:px-8 py-10">
         <div className="flex items-center gap-2 text-neem mb-2">
-          <Library className="w-5 h-5" /> <span className="text-sm font-medium">Corpus & sources</span>
+          <Library className="w-5 h-5" /> <span className="text-sm font-medium">{t.sources.badge}</span>
         </div>
-        <h1 className="font-display font-bold text-2xl mb-2">What this assistant has actually read</h1>
-        <p className="text-muted text-sm mb-6">
-          Every answer is grounded only in the documents below. Click any document to see its status; click a node in the graph to see how documents relate
-          (amends, implements, supersedes).
-        </p>
+        <h1 className="font-display font-bold text-2xl mb-2">{t.sources.title}</h1>
+        <p className="text-muted text-sm mb-6">{t.sources.desc}</p>
 
         {health && (
           <div className="flex flex-wrap gap-3 mb-6">
-            <Stat label="Indexed passages" value={health.corpusChunks} />
-            <Stat label="Documents" value={docs.length} />
-            <Stat label="Verified legal anchors" value={`${health.anchorsVerified}/${health.anchorsTotal}`} />
-            <Stat label="AI drafting" value={health.geminiConfigured ? "on" : "retrieval-only"} />
+            <Stat label={t.sources.indexedPassages} value={health.corpusChunks} />
+            <Stat label={t.sources.documents} value={docs.length} />
+            <Stat label={t.sources.verifiedAnchors} value={`${health.anchorsVerified}/${health.anchorsTotal}`} />
+            <Stat label={t.sources.aiDrafting} value={health.aiConfigured ? t.sources.on : t.sources.retrievalOnly} />
           </div>
         )}
 
@@ -56,7 +55,7 @@ export default function SourcesPage() {
                     <Pill tone={d.status === "current" ? "neem" : d.status === "superseded" ? "sindoor" : "turmeric"}>{d.status}</Pill>
                     <Pill tone={d.tier === "primary" ? "neem" : "neutral"}>{d.tier}</Pill>
                     <Pill>{d.jurisdiction}</Pill>
-                    <Pill>{d.chunks} passages</Pill>
+                    <Pill>{d.chunks} {t.sources.passages}</Pill>
                   </div>
                 </div>
               </div>
@@ -78,14 +77,14 @@ export default function SourcesPage() {
             {selected.note && <p className="text-sm bg-sunk rounded-xl p-3 mb-3">{selected.note}</p>}
             <p className="text-xs text-muted">{selected.pages} pages · {selected.chunks} indexed passages</p>
             <button onClick={() => setSelected(null)} className="mt-6 text-sm text-neem underline">
-              Close
+              {t.sources.close}
             </button>
           </div>
         </div>
       )}
 
       <div className="max-w-5xl mx-auto px-4 md:px-8 pb-10">
-        <h2 className="font-semibold text-sm mb-2 mt-8">Live official registries (not indexed — always check directly)</h2>
+        <h2 className="font-semibold text-sm mb-2 mt-8">{t.sources.registries}</h2>
         <div className="grid md:grid-cols-2 gap-2">
           {[
             ["TKDL", "https://www.tkdl.res.in"],

@@ -34,9 +34,10 @@ provide, so the whole thing runs free, offline-capable except for the optional A
   number.
 - **Genuine abstention**: low-confidence / out-of-corpus questions get an explicit "not clearly
   answered" response and an escalate-to-human button, instead of a guess.
-- **Multilingual routing**: a herb/legal-term alias dictionary (Hindi + Hinglish + botanical
-  names) plus optional Bhashini machine translation; works in "alias-only" mode with zero
-  external services, degrades gracefully and says so if Bhashini isn't configured.
+- **Multilingual answers**: a herb/legal-term alias dictionary (Hindi + Hinglish + botanical
+  names) routes non-English queries to the right passages, and the drafting model (Groq/Llama)
+  is instructed to write the summary and points directly in the requested language (Hindi,
+  Marathi, Tamil, Telugu, Kannada, Malayalam) — one LLM call, no separate translation API/key.
 - **Escalation, audit log, PII redaction, rate limiting** on the API.
 - **Knowledge graph** of how the source documents relate (amends / implements / supersedes),
   rendered client-side with d3-force — on the Corpus & Sources page.
@@ -52,15 +53,10 @@ provide, so the whole thing runs free, offline-capable except for the optional A
    Designs, GI). **Copyright Act is not indexed** — no PDF for it was in the dataset you gave me;
    the app is honest about this (it won't fabricate a Copyright Act citation) but you should add
    the Act text if judges are likely to probe copyright questions.
-2. **AI drafting requires a free Gemini key.** Without `GEMINI_API_KEY` in `.env.local`, the app
+2. **AI drafting requires a free Groq key.** Without `GROQ_API_KEY` in `.env.local`, the app
    runs in "retrieval mode": it shows you the exact statute passages instead of a generated
    summary. This is a deliberate, safe fallback — not a bug — but for the demo you'll want a key
-   in so the assistant actually drafts prose. Get one free at https://aistudio.google.com/
-3. **Bhashini isn't wired to real credentials.** The translation client
-   (`src/lib/translate.ts`) is written and will work the moment you add
-   `BHASHINI_UDYAT_KEY` / `BHASHINI_PIPELINE_ID` (free, register at bhashini.gov.in). Until then,
-   non-English queries route through the built-in alias dictionary only (works for common
-   patterns; won't handle arbitrary free-form Hindi sentences as well as real MT would).
+   in so the assistant actually drafts prose. Get one free at https://console.groq.com/keys
 4. **International corpus is curated summaries, not treaty text** (`data/curated_intl.json`), each
    with a `verifyUrl`. This was a deliberate scope decision given the time available — TRIPS,
    CBD, Nagoya, PCT etc. full texts were not in your dataset. The app labels these clearly as
@@ -86,7 +82,7 @@ npm install
 python3 scripts/ingest.py        # builds data/corpus.json from dataset/*.pdf (~20s, already done — data/ is pre-built and committed)
 npm run smoke                    # sanity check the data files
 npm run eval                     # full evaluation suite (37 checks)
-cp .env.example .env.local       # add your free Gemini key to enable AI drafting
+cp .env.example .env.local       # add your free Groq key to enable AI drafting
 npm run dev                      # http://localhost:3000
 ```
 
@@ -110,7 +106,8 @@ src/lib/
   abs.ts                Biological Diversity Act / ABS Regulations decision logic
   compose.ts            RAG orchestration: retrieve -> draft -> verify -> confidence
   guard.ts               Citation groundedness checker (numbers/sections/dates must match)
-  gemini.ts / translate.ts   Free-tier AI + MT clients, both optional
+  groq.ts / translate.ts     Free-tier AI client (optional) + language-name helper for
+                             prompt-based multilingual drafting
 src/app/api/            chat, classify, abs, escalate, health, source
 src/app/(app)/          chat, classify, abs, sources, about pages
 scripts/eval.ts         37-check evaluation harness (run with `npm run eval`)
@@ -118,6 +115,11 @@ scripts/eval.ts         37-check evaluation harness (run with `npm run eval`)
 
 ## Security note
 
-The uploaded prototype's `.env` files contained a live Gemini API key. **That key should be
-considered compromised — rotate it in Google AI Studio before using this project.** This rebuild
-never hardcodes any key; `.env.local` is gitignored.
+This project's AI drafting now uses the same Groq key as the LegalEase AI project (previously
+it used a separate Gemini key). Sharing one key across two deployed apps is fine functionally,
+but it does mean the key's usage/rate limit is shared and a leak from either project exposes
+both — **any `.env` file that ever gets committed or zipped up with the project should be
+treated as compromised and the key rotated** at https://console.groq.com/keys. This rebuild
+never hardcodes a key in source; `.env.local` is gitignored, and only `.env.example` (blank) is
+committed. In Vercel, set `GROQ_API_KEY` under Project → Settings → Environment Variables —
+never in a file you deploy.

@@ -15,6 +15,7 @@ const config: Config = {
         muted: v("muted"),
         line: v("line"),
         neem: { DEFAULT: v("neem"), soft: v("neem-soft"), ink: v("neem-ink") },
+        moss: { DEFAULT: v("moss"), soft: v("moss-soft"), ink: v("moss-ink") },
         turmeric: { DEFAULT: v("turmeric"), soft: v("turmeric-soft"), ink: v("turmeric-ink") },
         indigo: { DEFAULT: v("indigo"), soft: v("indigo-soft"), ink: v("indigo-ink") },
         sindoor: { DEFAULT: v("sindoor"), soft: v("sindoor-soft") },
