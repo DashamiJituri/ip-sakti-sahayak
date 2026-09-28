@@ -24,10 +24,11 @@ const ACTIVITIES = [
 interface Result {
   requirement: string; headline: string; detail: string[]; benefitSharingNote?: string;
   citations: { title: string; page: number | null; section: string | null; excerpt: string }[];
+  notice?: string;
 }
 
 export default function AbsPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [actorType, setActorType] = useState(ACTORS[0].v);
   const [activity, setActivity] = useState(ACTIVITIES[0].v);
   const [usesCodifiedTK, setUsesCodifiedTK] = useState(false);
@@ -40,7 +41,7 @@ export default function AbsPage() {
     const res = await fetch("/api/abs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ actorType, activity, usesCodifiedTK, species: species || undefined }),
+      body: JSON.stringify({ actorType, activity, usesCodifiedTK, species: species || undefined, language: lang }),
     });
     setResult(await res.json());
     setLoading(false);
@@ -97,6 +98,7 @@ export default function AbsPage() {
         {result && (
           <div className="card p-5 mt-5 animate-rise">
             <Pill tone="turmeric">{result.requirement.replace(/_/g, " ")}</Pill>
+            {result.notice && <p className="text-xs text-turmeric-ink bg-turmeric-soft rounded-lg px-3 py-2 mt-2">{result.notice}</p>}
             <h2 className="font-display font-semibold text-lg mt-2 mb-2">{result.headline}</h2>
             <ul className="list-disc pl-5 text-sm space-y-1.5">
               {result.detail.map((d, i) => (

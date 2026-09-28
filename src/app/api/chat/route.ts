@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { answerQuestion } from "@/lib/compose";
 import { redactPII } from "@/lib/guard";
 import { audit, hash } from "@/lib/audit";
+import { ALL_LANGS } from "@/lib/translate";
 import type { ChatRequest, Jurisdiction, Lang } from "@/lib/types";
 
 export const runtime = "nodejs";
 
 const JURIS: Jurisdiction[] = ["india", "international", "both"];
-const LANGS: Lang[] = ["en", "hi", "mr", "ta", "te", "kn", "ml"];
+const LANGS: Lang[] = ALL_LANGS;
 
 const buckets = new Map<string, { n: number; ts: number }>();
 function rateLimited(key: string): boolean {

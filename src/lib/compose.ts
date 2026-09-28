@@ -5,6 +5,7 @@ import { groqJSON, hasGroq, GroqError } from "./groq";
 import { pointIsSupported } from "./guard";
 import { CATEGORIES } from "./classifier";
 import { languageName } from "./translate";
+import { translateFields, TRANSLATION_UNAVAILABLE_NOTICE } from "./translate";
 import type { Lang } from "./types";
 
 const DISCLAIMER =
@@ -53,7 +54,7 @@ function systemFor(language: Lang): string {
   const langRule =
     language === "en"
       ? ""
-      : `\n7. Write the "summary" field and every point's "text" field in ${lang} (not English). Keep section numbers, act/rule names, dates, percentages, amounts and passage ids (e.g. "S1") exactly as they appear — do not translate or transliterate those, only the surrounding sentence.`;
+      : `\n8. Write the "summary" field and every point's "text" field in ${lang} (not English). Keep section numbers, act/rule names, dates, percentages, amounts and passage ids (e.g. "S1") exactly as they appear — do not translate or transliterate those, only the surrounding sentence. Refer to plants/herbs by their common name in that language or keep the English name (e.g. neem); never add a bracketed guess at a translation.`;
   return `You are the drafting layer behind IP-SAKTI Sahayak, an Indian government (Ministry of Ayush) assistant for Ayurveda IP and regulatory questions.
 Rules, no exceptions:
 1. Use ONLY the numbered passages given to you. Do not use outside knowledge, do not guess section numbers, dates, percentages or figures that are not literally present in a passage.
@@ -61,7 +62,8 @@ Rules, no exceptions:
 3. If the passages do not answer the question, set insufficientEvidence=true and keep points minimal or empty. Do not pad with generic statements.
 4. Write for a founder/practitioner, not a lawyer: plain language, no legalese, but keep any section number, percentage, date or amount EXACTLY as it appears in the passage.
 5. Never say a statement is "the law" if the passage is itself labelled as a curated summary, a note, or a reference list - say "generally" or attribute it, and prefer citing a primary passage when both exist.
-6. Output strict JSON only, matching the schema you were given. No markdown, no commentary.${langRule}`;
+6. Output strict JSON only, matching the schema you were given. No markdown, no commentary.
+7. Timing and scope words must match the passage exactly: if a passage says approval is needed "before grant" of an intellectual property right, say "before grant" (never "before applying/filing", even if the question says so), and state who the passage says the rule applies to (e.g. persons under section 3(2)) instead of generalising it to everyone. If the question's premise conflicts with the passage, say so plainly.${langRule}`;
 }
 
 function buildPrompt(question: string, hits: Hit[], idOf: Map<string, string>, jurisdiction: string): string {
@@ -76,6 +78,16 @@ ${passages || "(none retrieved)"}
 
 Return JSON: {"summary": string, "points": [{"text": string, "sourceIds": string[]}], "insufficientEvidence": boolean}`;
 }
+
+const NO_CITED_SUMMARY: Record<Lang, string> = {
+  en: "The assistant couldn't draft a fully-cited summary for this exact question. Showing the closest matching passages instead.",
+  hi: "इस प्रश्न के लिए पूरी तरह उद्धृत सारांश तैयार नहीं हो सका। इसके बजाय सबसे निकट के अंश दिखाए जा रहे हैं।",
+  mr: "या प्रश्नासाठी पूर्णपणे उद्धृत सारांश तयार करता आला नाही. त्याऐवजी सर्वात जवळचे उतारे दाखवले आहेत.",
+  ta: "இந்தக் கேள்விக்கு முழுமையாக மேற்கோள் காட்டிய சுருக்கத்தை உருவாக்க முடியவில்லை. அதற்குப் பதிலாக மிக நெருக்கமான பகுதிகள் காட்டப்படுகின்றன.",
+  te: "ఈ ప్రశ్నకు పూర్తిగా ఉదహరించిన సారాంశం రూపొందించలేకపోయాము. బదులుగా అత్యంత దగ్గరి భాగాలు చూపబడుతున్నాయి.",
+  kn: "ಈ ಪ್ರಶ್ನೆಗೆ ಸಂಪೂರ್ಣವಾಗಿ ಉಲ್ಲೇಖಿತ ಸಾರಾಂಶ ರಚಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಬದಲಿಗೆ ಹತ್ತಿರದ ಭಾಗಗಳನ್ನು ತೋರಿಸಲಾಗಿದೆ.",
+  ml: "ഈ ചോദ്യത്തിന് പൂർണ്ണമായി ഉദ്ധരിച്ച സംഗ്രഹം തയ്യാറാക്കാനായില്ല. പകരം ഏറ്റവും അടുത്ത ഭാഗങ്ങൾ കാണിക്കുന്നു.",
+};
 
 const RETRIEVAL_MODE_SUMMARY: Record<Lang, string> = {
   en: "AI summarisation is off (no API key configured). Showing the most relevant passages directly.",
@@ -119,7 +131,7 @@ async function draftForJurisdiction(question: string, hits: Hit[], language: Lan
         summary: `AI summarisation failed (${msg}). Showing the most relevant passages directly instead of a generated summary.`,
         points: [],
         withheld: 0,
-        passages: refs.map((r) => r.id),
+        passages: refs.slice(0, 3).map((r) => r.id),
       },
       refs,
     };
@@ -160,10 +172,10 @@ async function draftForJurisdiction(question: string, hits: Hit[], language: Lan
         summary:
           raw.summary && raw.summary.trim()
             ? raw.summary
-            : "The assistant couldn't draft a fully-cited summary for this exact question. Showing the closest matching passages instead.",
+            : NO_CITED_SUMMARY[language],
         points: [],
         withheld,
-        passages: refs.map((r) => r.id),
+        passages: refs.slice(0, 3).map((r) => r.id), // top 3 only: a long list of weak matches looks like an answer
       },
       refs,
     };
@@ -249,7 +261,7 @@ export async function answerQuestion(req: ChatRequest): Promise<ChatResponse> {
   let aiOk = hasGroq();
 
   for (const j of jurisdictions) {
-    const hits = search(augmented, { jurisdiction: j, k: 7, category: req.category || null });
+    const hits = search(augmented, { jurisdiction: j, k: 9, category: req.category || null });
     allHits = allHits.concat(hits);
     const d = await draftForJurisdiction(englishQuery, hits, req.language);
     if (d) {
@@ -260,6 +272,27 @@ export async function answerQuestion(req: ChatRequest): Promise<ChatResponse> {
   }
 
   const confidence = scoreConfidence(allHits, answers, aiOk);
+
+  // BUG FIX (follow-up): the drafted summary/points were already language-aware, but the
+  // literal cited passage excerpts shown in the "insufficient evidence" / retrieval-mode
+  // fallback (JurisdictionAnswer.passages) were always the raw English source text, even in
+  // a Hindi/Marathi/etc. session - the passage cards were the one part of a chat answer that
+  // never respected the selected language. `excerpt` (the authoritative, literal source text)
+  // is never altered; this only adds an optional, clearly-labelled machine-translated preview
+  // alongside it, translated in one batched call to keep this to a single extra request per
+  // chat turn regardless of how many sources were cited.
+  const shownIds = [...new Set(answers.flatMap((a) => a.passages || []))].filter((id) => sources[id]);
+  if (req.language !== "en" && shownIds.length > 0) {
+    const toTranslate: Record<string, string> = {};
+    for (const id of shownIds) toTranslate[id] = sources[id].excerpt.slice(0, 220); // only what the preview cards show
+    const { translated, ok } = await translateFields(req.language, toTranslate);
+    if (ok && shownIds.every((id) => typeof translated[id] === "string")) {
+      for (const id of shownIds) sources[id] = { ...sources[id], excerptTranslated: translated[id] };
+    } else {
+      notices.push(TRANSLATION_UNAVAILABLE_NOTICE[req.language]);
+    }
+  }
+
   const totalContent = answers.reduce((a, x) => a + x.points.length + (x.passages?.length || 0), 0);
   let mode: ChatResponse["mode"] = hasGroq() ? "ai" : "retrieval";
   if (totalContent === 0 || confidence.level === "low") mode = "abstain";

@@ -2,6 +2,8 @@
 import { X, ExternalLink, FileText } from "lucide-react";
 import type { SourceRef } from "@/lib/types";
 import { Pill } from "./ui";
+import { useLanguage } from "./LanguageProvider";
+import { MACHINE_TRANSLATION_CAPTION } from "@/lib/translate";
 
 const STATUS_TONE: Record<string, "neem" | "turmeric" | "sindoor" | "neutral"> = {
   current: "neem",
@@ -12,6 +14,7 @@ const STATUS_TONE: Record<string, "neem" | "turmeric" | "sindoor" | "neutral"> =
 };
 
 export default function SourceDrawer({ source, onClose }: { source: SourceRef | null; onClose: () => void }) {
+  const { lang } = useLanguage();
   if (!source) return null;
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true">
@@ -44,6 +47,13 @@ export default function SourceDrawer({ source, onClose }: { source: SourceRef | 
         <div className="mt-4 p-4 rounded-xl bg-sunk border border-line font-legal text-[13px] leading-relaxed whitespace-pre-wrap">
           {source.excerpt}
         </div>
+
+        {source.excerptTranslated && (
+          <div className="mt-2 p-3 rounded-xl border border-dashed border-line text-[12px] leading-relaxed whitespace-pre-wrap">
+            <p className="text-[10px] text-muted mb-1">{MACHINE_TRANSLATION_CAPTION[lang]}</p>
+            {source.excerptTranslated}
+          </div>
+        )}
 
         {source.verifyUrl && (
           <a href={source.verifyUrl} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-1.5 text-sm text-neem hover:underline">

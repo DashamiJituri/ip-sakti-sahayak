@@ -70,6 +70,23 @@ export const TERM_MAP: Record<string, string> = {
 
 const HINGLISH_HINTS = /\b(kya|kaise|hai|hain|kar|karna|milega|mujhe|mera|meri|humara|hamara|ke liye|nahi|nhi|kitna|kaun|kab|dawai|dawa|haldi|vaidya|anumati|jadi|buti|paramparik|videshi)\b/i;
 
+// English-phrase concept expansion. A question like "does an exact classical/Samhita
+// match block my patent" is asking exactly what Patents Act s.3(p) answers ("an
+// invention which, in effect, is traditional knowledge, or an aggregation/duplication
+// of known properties of a traditionally known component") - but the question's own
+// wording (samhita, classical text, exact match) shares almost no vocabulary with that
+// clause's text, so plain BM25 term-overlap search misses it even though it's indexed
+// and is the right answer. This routes that family of question toward the clause's own
+// wording, the same way TERM_MAP routes Hindi/Hinglish terms toward their English
+// equivalents. Add more entries here if other question patterns are found to have the
+// same "right passage exists, wrong vocabulary" gap.
+const CONCEPT_ROUTES: { rx: RegExp; extra: string[] }[] = [
+  {
+    rx: /\b(exact(?:ly)?\s+match|already\s+(?:known|described|written|documented)\s+(?:in|formula)|classical\s+(?:text|formulation)|samhita|ayurvedic\s+text|authoritative\s+(?:book|text|formulary)|named\s+(?:in\s+)?(?:a\s+)?formulary)\b/,
+    extra: ["traditional knowledge", "aggregation", "duplication", "known properties", "traditionally known component", "novelty"],
+  },
+];
+
 export function needsTranslation(q: string): boolean {
   const letters = q.replace(/[\s\d\p{P}]/gu, "");
   if (!letters) return false;
@@ -81,6 +98,7 @@ export function expandQuery(q: string): { extra: string[]; herbs: Herb[] } {
   const low = q.toLowerCase();
   const extra: string[] = [];
   for (const [k, v] of Object.entries(TERM_MAP)) if (low.includes(k.toLowerCase())) extra.push(v);
+  for (const r of CONCEPT_ROUTES) if (r.rx.test(low)) extra.push(...r.extra);
   const herbs: Herb[] = [];
   for (const h of HERBS) {
     const hit = h.names.some((n) => new RegExp(`(^|[^a-z])${n}([^a-z]|$)`).test(low)) || (h.hindi || []).some((n) => q.includes(n));
@@ -88,6 +106,12 @@ export function expandQuery(q: string): { extra: string[]; herbs: Herb[] } {
       herbs.push(h);
       extra.push(h.botanical);
     }
+  }
+  // "Can I patent <herb>?" shares no vocabulary with the clauses that answer it (Patents Act
+  // s.3(j) plants, s.3(p) traditional knowledge, BD Act approval for biological resources).
+  // test the alias-expanded text too, so Hindi/Marathi/Hinglish 'पेटेंट' (mapped to 'patent') triggers this as well
+  if (herbs.length > 0 && /\bpatent/.test(low + " " + extra.join(" ").toLowerCase())) {
+    extra.push("traditional knowledge", "aggregation", "duplication", "known properties", "plants and animals", "biological resource", "prior approval");
   }
   return { extra, herbs };
 }

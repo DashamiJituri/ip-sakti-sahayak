@@ -35,6 +35,7 @@ export interface SourceRef {
   tier: DocMeta["tier"];
   jurisdiction: "india" | "international";
   excerpt: string;
+  excerptTranslated?: string; // unofficial machine translation of `excerpt` for display only — `excerpt` (the literal source text) always remains the authoritative version and is never itself modified
   verifyUrl?: string;
   note?: string;
 }

@@ -7,6 +7,7 @@ import { ConfidenceBadge, Pill } from "@/components/ui";
 import SourceDrawer from "@/components/SourceDrawer";
 import { CitationText, InlineSourceChips } from "@/components/CitationText";
 import { useLanguage } from "@/components/LanguageProvider";
+import { MACHINE_TRANSLATION_CAPTION } from "@/lib/translate";
 import type { ChatResponse, Jurisdiction, SourceRef } from "@/lib/types";
 
 const SUGGESTIONS = [
@@ -155,6 +156,7 @@ export default function ChatPage() {
                     onEscalate={(q) => escalate(q)}
                     escalating={escalating}
                     t={t}
+                    lang={lang}
                   />
                 )}
               </div>
@@ -276,12 +278,14 @@ function AnswerBlock({
   onEscalate,
   escalating,
   t,
+  lang,
 }: {
   response: ChatResponse;
   onOpen: (sources: Record<string, SourceRef>, id: string) => void;
   onEscalate: (q: string) => void;
   escalating: boolean;
   t: ReturnType<typeof useLanguage>["t"];
+  lang: ReturnType<typeof useLanguage>["lang"];
 }) {
   if (response.mode === "abstain") {
     return (
@@ -348,12 +352,14 @@ function AnswerBlock({
                 {a.passages.map((id) => {
                   const s = response.sources[id];
                   if (!s) return null;
+                  const preview = s.excerptTranslated || s.excerpt;
                   return (
                     <li key={id}>
                       <button onClick={() => onOpen(response.sources, id)} className="w-full text-left text-sm bg-sunk hover:bg-neem-soft rounded-xl p-3 transition-colors">
                         <span className="cite mr-2">{id}</span>
-                        {s.excerpt.slice(0, 180)}…
+                        {preview.slice(0, 180)}…
                       </button>
+                      {s.excerptTranslated && <p className="text-[10px] text-muted mt-1 pl-1">{MACHINE_TRANSLATION_CAPTION[lang]}</p>}
                     </li>
                   );
                 })}

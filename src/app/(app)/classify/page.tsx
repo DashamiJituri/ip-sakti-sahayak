@@ -18,11 +18,11 @@ const LABELS: Record<string, string> = {
 };
 
 export default function ClassifyPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [questions, setQuestions] = useState<Q[] | null>(null);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [result, setResult] = useState<{ category: Category; reasoning: string[]; confidence: string } | null>(null);
+  const [result, setResult] = useState<{ category: Category; reasoning: string[]; confidence: string; notice?: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function start() {
@@ -44,7 +44,7 @@ export default function ClassifyPage() {
       const res = await fetch("/api/classify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: Object.entries(next).map(([questionId, value]) => ({ questionId, value })) }),
+        body: JSON.stringify({ answers: Object.entries(next).map(([questionId, value]) => ({ questionId, value })), language: lang }),
       });
       const data = await res.json();
       setResult(data);
@@ -73,6 +73,7 @@ export default function ClassifyPage() {
           <div className="flex items-center gap-2 text-neem mb-2">
             <CheckCircle2 className="w-5 h-5" /> <span className="text-sm font-medium">{t.classify.done}</span>
           </div>
+          {result.notice && <p className="text-xs text-turmeric-ink bg-turmeric-soft rounded-lg px-3 py-2 mb-3">{result.notice}</p>}
           <h1 className="font-display font-bold text-2xl mb-2">{result.category.label}</h1>
           <p className="text-muted mb-4">{result.category.gist}</p>
           <Pill tone={result.confidence === "high" ? "neem" : "turmeric"}>{result.confidence} confidence</Pill>
